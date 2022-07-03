@@ -1,15 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice} from '@reduxjs/toolkit';
 
-
-const initialState = {
-  items: [],
-  filter: '',
-}
 
 export const contactSlice = createSlice({
   name: 'contacts',
-  initialState,
-
+  initialState: {
+  items: [],
+  filter: '',
+  },
   reducers: {
     addContact(state, action) {
       state.items.push(action.payload);
@@ -21,8 +18,7 @@ export const contactSlice = createSlice({
 
     filterAction(state, action) {
       state.filter = action.payload;
-    },    
-     
+    },     
   },
 });
 
@@ -30,27 +26,3 @@ console.log(contactSlice);
 
 export const { addContact, delContactAction, filterAction } = contactSlice.actions;
 export default contactSlice.reducer
-
-// REPETA
-
-// import { createSlice } from '@reduxjs/toolkit';
-
-// export const userSlice = createSlice({
-//   name: 'user',
-//   initialState: {
-//     login: '',
-//     isLoggedIn: false,
-//   },
-//   reducers: {
-//     logIn(state, action) {
-//       state.login = action.payload;
-//       state.isLoggedIn = true;
-//     },
-//     logOut(state) {
-//       state.login = '';
-//       state.isLoggedIn = false;
-//     },
-//   },
-// });
-
-// export const { logIn, logOut } = userSlice.actions;

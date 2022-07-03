@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { addContact } from 'redux/contactSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
-
+import toast from 'react-hot-toast';
 import './ContactsForm.css';
-// import { current } from '@reduxjs/toolkit';
-// import PropTypes from 'prop-types';
 
 function ContactsForm() {
   const dispatch = useDispatch();
@@ -15,16 +13,45 @@ function ContactsForm() {
 
   const handleSubmit = evt => {
     evt.preventDefault();
-    const contact = {
-      id: nanoid(),
-      name: name,
-      number: number,
-      // completed: false,
-    };
+    formSubmitHandler({ name, number });
+    resetState();
+  };
 
-    dispatch(addContact(contact));
+  const resetState = () => {
     setName('');
     setNumber('');
+  };
+
+  const handleChange = evt => {
+    switch (evt.target.name) {
+      case 'name':
+        setName(evt.target.value);
+        break;
+      case 'number':
+        setNumber(evt.target.value);
+        break;
+
+      default:
+        return;
+    }
+  };
+
+  const contacts = useSelector(state => state.contact.contacts);
+  // add new contact
+  const formSubmitHandler = ({ name, number }) => {
+    const normalizedName = name.toLowerCase();
+    const isFoundName = contacts?.some(
+      contact => contact.name.toLowerCase() === normalizedName
+    );
+
+    if (isFoundName) {
+      toast.error(`${name} is already in contacts!`);
+      return;
+    }
+    // if not found, add new contact
+    const newData = { id: nanoid(), name, number };
+    dispatch(addContact(newData));
+    toast.success('Successfully added!');
   };
 
   return (
@@ -33,7 +60,7 @@ function ContactsForm() {
         Name
         <input
           className="Form__input"
-          onChange={evt => setName(evt.currentTarget.value)}
+          onChange={handleChange}
           type="text"
           name="name"
           value={name}
@@ -47,7 +74,7 @@ function ContactsForm() {
         Number
         <input
           className="Form__input"
-          onChange={evt => setNumber(evt.currentTarget.value)}
+          onChange={handleChange}
           type="tel"
           name="number"
           value={number}
@@ -57,11 +84,7 @@ function ContactsForm() {
         />
       </label>
 
-      <button
-        className="Form__button"
-        type="submit"
-        // onClick={() => handleSubmit}
-      >
+      <button className="Form__button" type="submit">
         Add contact
       </button>
     </form>
@@ -69,69 +92,3 @@ function ContactsForm() {
 }
 
 export default ContactsForm;
-
-// const handleSubmit = evt => {
-//   evt.preventDefault();
-
-//   const contact = {
-//     id: nanoid(),
-//     name: name,
-//     number: number,
-//   };
-
-//   dispatch(addContact(contact));
-//   // onSubmit(name, number);
-//   reset();
-// };
-
-// const reset = () => {
-//   setName('');
-//   setNumber('');
-// };
-
-// const handleChange = evt => {
-//   const { name, value } = evt.target;
-//   switch (name) {
-//     case 'name':
-//       setName(value);
-//       break;
-
-//     case 'number':
-//       setNumber(value);
-//       break;
-
-//     default:
-//       return;
-//   }
-// };
-
-// ContactsForm.propTypes = {
-//   onSubmit: PropTypes.func.isRequired,
-// };
-
-// Repeta
-
-// import { useDispatch } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
-// import { logIn } from '../redux/userSlice';
-
-// export const LoginForm = () => {
-//   const navigate = useNavigate();
-//   const dispatch = useDispatch();
-
-//   const handleSubmit = e => {
-//     e.preventDefault();
-//     const form = e.currentTarget;
-//     dispatch(logIn(form.elements.login.value));
-//     form.reset();
-//     navigate('/dashboard', { replace: true });
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <input type="text" name="login" />
-//       <br />
-//       <button type="submit">Log in</button>
-//     </form>
-//   );
-// };
